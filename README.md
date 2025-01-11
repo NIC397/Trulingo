@@ -1,13 +1,19 @@
 # Trulingo 🌍
 
-Trulingo is a multilingual news aggregator and fact-checking tool that retrieves and processes articles from various news sources. It supports both English and Chinese news sources and can verify claims using the Gemini API.
+Trulingo is a multilingual news aggregator and fact-checking tool that retrieves and processes articles from various news sources. It supports both English and Chinese news sources and performs LLM analysis and comparison using the Gemini API.
 
 ## Features
 
 - **Multilingual Support**: Aggregates news from both English and Chinese sources.
-- **Claim Verification**: Uses the Gemini API to verify claims with context from both English and Chinese articles.
+- **LLM Analysis & Comparison**: Uses the Gemini API to analyze and compare claims with context from both English and Chinese articles.
 - **Streamlit UI**: Provides an interactive user interface for searching and verifying news claims.
-- **Command Line Interface**: Allows searching and processing articles via the command line.
+
+## Prerequisites
+1. Register for a Google Custom Search JSON API Key and create a Custom Search Engine by following [this guide](https://developers.google.com/custom-search/v1/introduction).
+2. Set up a Gemini API Key by following the instructions [here](https://aistudio.google.com/apikey).
+
+## Streamlit Deployed APP
+[Click Here to Try the APP on Streamlit](https://trulingo.streamlit.app/)
 
 ## Installation
 
@@ -21,11 +27,11 @@ Trulingo is a multilingual news aggregator and fact-checking tool that retrieves
     pip install -r requirements.txt
     ```
 
-## Usage
+## Usage (Local Machine)
 
 ### Streamlit App
 
-To run the Streamlit app, use the following command:
+To run the Streamlit ap locally, use the following command:
 ```sh
 streamlit run src/streamlit_app.py
 ```
@@ -33,7 +39,7 @@ streamlit run src/streamlit_app.py
 ### Command Line Interface
 To use the command line interface, run:
 ```sh
-python src/source_retrieval.py "Your claim here" -o output.json --gemini-key YOUR_GEMINI_API_KEY --verify --verbose
+python src/source_retrieval.py "Your claim here" -o output.json --gemini-key YOUR_GEMINI_API_KEY --verify --verbose --google-key YOUR_GOOGLE_API_KEY --cse-id YOUR_CSE_ID
 ```
 
 ### Example Claims
@@ -53,7 +59,7 @@ You can test the tool with the following example claims:
 Contributions are welcome! Please open an issue or submit a pull request for any improvements or bug fixes.
 
 ### License
-This project is licensed under the MIT License. See the LICENSE file for details.
+This project is licensed under the Apache 2.0 License. See the LICENSE file for details.
 
 ### Acknowledgements
 This project was inspired by and uses templates from the [OrigINsight](https://github.com/Theod0reWu/OrigINsight) repository.
