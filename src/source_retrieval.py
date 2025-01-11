@@ -25,9 +25,11 @@ class ArticleInfo:
     language: Optional[str] = None
 
 class SourceRetriever:
-    def __init__(self, gemini_api_key: Optional[str] = None):
+    def __init__(self, gemini_api_key: Optional[str] = None, google_api_key: Optional[str] = None, cse_id: Optional[str] = None):
         self.headers = {"User-Agent": "Mozilla/5.0"}
         self.translator = Translator()
+        self.google_api_key = google_api_key
+        self.cse_id = cse_id
         if gemini_api_key:
             genai.configure(api_key=gemini_api_key)
             self.model = genai.GenerativeModel('gemini-pro')
@@ -48,12 +50,46 @@ class SourceRetriever:
                     params={"q": combined_query},
                     headers=self.headers
                 )
+                print(response)
                 soup = BeautifulSoup(response.content, "html.parser")
                 for link in soup.find_all("a", {"class": "result__a"}, limit=num_results):
                     url = link["href"]
                     original_url = self._unwrap_duckduckgo_url(url)
                     if original_url:
                         results.append(original_url)
+            except Exception as e:
+                print(f"Error during search for {source}: {e}")
+        return results
+
+    def search_articles_google(self, query: str, news_sources: List[str], num_results: int = 5) -> List[str]:
+        """Search for articles using Google Custom Search JSON API with specific news sources."""
+        results = []
+        if not self.google_api_key or not self.cse_id:
+            print("Google API key or CSE ID not configured")
+            return results
+
+        for source in news_sources:
+            combined_query = f"{query} {source}"
+            try:
+                response = requests.get(
+                    "https://www.googleapis.com/customsearch/v1",
+                    params={
+                        "key": self.google_api_key,
+                        "cx": self.cse_id,
+                        "q": combined_query,
+                        "num": num_results
+                    }
+                )
+                print(f"Response status code for {source}: {response.status_code}")
+                
+                if response.status_code == 200:
+                    search_results = response.json()
+                    for item in search_results.get("items", []):
+                        results.append(item["link"])
+                elif response.status_code == 403:
+                    print(f"Invalid API key or CSE ID for {source}.")
+                else:
+                    print(f"Unexpected status code {response.status_code} for {source}.")
             except Exception as e:
                 print(f"Error during search for {source}: {e}")
         return results
@@ -201,7 +237,8 @@ class SourceRetriever:
             claim_en = self.translator.translate(claim, src='zh-cn', dest='en').text
 
         if selected_sources.get('en'):
-            urls_en = self.search_articles_duckduckgo(claim_en, self.us_news_sources, num_results)
+            # urls_en = self.search_articles_duckduckgo(claim_en, self.us_news_sources, num_results)
+            urls_en = self.search_articles_google(claim_en, self.us_news_sources, num_results)
             for url in urls_en:
                 print(f"Processing (EN): {url}")
                 article_info = self.extract_article_info(url, claim, language='en')
@@ -211,7 +248,8 @@ class SourceRetriever:
                         context_en += article_info.content + "\n\n"
 
         if selected_sources.get('zh-cn'):
-            urls_zh = self.search_articles_duckduckgo(claim_zh, self.cn_news_sources, num_results)
+            # urls_zh = self.search_articles_duckduckgo(claim_zh, self.cn_news_sources, num_results)
+            urls_zh = self.search_articles_google(claim_zh, self.cn_news_sources, num_results)
             for url in urls_zh:
                 print(f"Processing (ZH): {url}")
                 article_info = self.extract_article_info(url, claim, language='zh')
@@ -269,10 +307,12 @@ def main():
     parser.add_argument('--gemini-key', help='Gemini API key for claim verification')
     parser.add_argument('--verify', action='store_true',
                       help='Verify claim using Gemini API')
+    parser.add_argument('--google-key', help='Google API key for article search')
+    parser.add_argument('--cse-id', help='Google Custom Search Engine ID')
 
     args = parser.parse_args()
     
-    retriever = SourceRetriever(gemini_api_key=args.gemini_key if args.verify else None)
+    retriever = SourceRetriever(gemini_api_key=args.gemini_key if args.verify else None, google_api_key=args.google_key, cse_id=args.cse_id)
     results_df = retriever.search_and_process_articles(
         args.claim, 
         {'en': True, 'zh': True},  # Default to both sources for CLI
