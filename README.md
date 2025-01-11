@@ -13,11 +13,10 @@ Trulingo is a multilingual news aggregator and fact-checking tool that retrieves
 
 1. Clone the repository:
     ```sh
-    git clone https://github.com/yourusername/trulingo.git
-    cd trulingo
+    git clone https://github.com/NIC397/Trulingo.git
     ```
 
-2. Install the required dependencies:
+2. Change directory to the cloned folder and install the required dependencies:
     ```sh
     pip install -r requirements.txt
     ```
@@ -49,45 +48,6 @@ You can test the tool with the following example claims:
 - `requirements.txt`: List of dependencies required for the project.
 - `src/source_retrieval.py`: Main script for retrieving and processing articles.
 - `src/streamlit_app.py`: Streamlit application for interactive use.
-
-### Contributing
-Contributions are welcome! Please open an issue or submit a pull request for any improvements or bug fixes.
-
-### License
-This project is licensed under the MIT License. See the LICENSE file for details.
-
-### Acknowledgements
-This project was inspired by and uses templates from the [OrigINsight](```markdown
-### Command Line Interface
-To use the command line interface, run:
-```sh
-python src/source_retrieval.py "Your claim here" -o output.json --gemini-key YOUR_GEMINI_API_KEY --verify --verbose
-```
-
-### Example Claims
-You can test the tool with the following example claims:
-
-- "MicroStrategy has benefited from the rally in cryptocurrencies this year"
-- "AI models are getting better almost every month right now"
-- "Sales of iPhone were up less than 1% in fiscal 2024 (which ended in September)"
-- "The stock of Apple (NASDAQ: AAPL) is up 22% year to date in 2024"
-
-### Project Structure
-- 
-
-requirements.txt
-
-: List of dependencies required for the project.
-- 
-
-source_retrieval.py
-
-: Main script for retrieving and processing articles.
-- 
-
-streamlit_app.py
-
-: Streamlit application for interactive use.
 
 ### Contributing
 Contributions are welcome! Please open an issue or submit a pull request for any improvements or bug fixes.
