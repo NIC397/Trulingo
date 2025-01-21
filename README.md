@@ -29,9 +29,9 @@ Trulingo is a multilingual news aggregator and fact-checking tool that retrieves
 
 ## Usage (Local Machine)
 
-### Streamlit App
+### Streamlit Frontend
 
-To run the Streamlit ap locally, use the following command:
+To run the Streamlit frontend locally, use the following command:
 ```sh
 streamlit run src/streamlit_app.py
 ```
